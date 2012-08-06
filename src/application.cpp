@@ -571,7 +571,22 @@ void Application::updateConfiguration()
     Q_FOREACH(const QWeakPointer<MainWindow> &w, m_mainWindows)
     {
         MainView *mv = w.data()->mainView();
+
         mv->updateTabBarVisibility();
+        mv->setAutomaticResizeTabs(!ReKonfig::useFixedTabSize());
+
+        // The automatic tab resizing mechanism of KTabBar doesn't handle existing tabs.
+        // So we need to trigger a tabText change to force that.
+        for (int i = 0; i < mv->count(); i++)
+        {
+            QString tabText = mv->tabText(i);
+            mv->setTabText(i, "");
+            mv->setTabText(i, tabText);
+        }
+
+        // Correctly resize tabs after a settings change
+        mv->tabBar()->updateGeometry();
+        mv->tabBar()->resize(mv->tabBar()->sizeHint());
 
         mv->tabBar()->setAnimatedTabHighlighting(ReKonfig::animatedTabHighlighting());
 

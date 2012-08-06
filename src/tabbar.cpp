@@ -105,36 +105,45 @@ TabBar::TabBar(QWidget *parent)
 
 QSize TabBar::tabSizeHint(int index) const
 {
-    Q_UNUSED(index);
+    QSize size;
 
-    MainView *view = qobject_cast<MainView *>(parent());
-
-    int buttonSize = view->addTabButton()->size().width();
-    int tabBarWidth = view->size().width() - buttonSize;
-    int baseWidth =  view->sizeHint().width() / baseWidthDivisor;
-    int minWidth =  view->sizeHint().width() / minWidthDivisor;
-
-    int w;
-    if (baseWidth * count() < tabBarWidth)
+    if (ReKonfig::useFixedTabSize())
     {
-        w = baseWidth;
-    }
-    else
-    {
-        if (count() > 0 && tabBarWidth / count() > minWidth)
+        Q_UNUSED(index);
+
+        MainView *view = qobject_cast<MainView *>(parent());
+
+        int buttonSize = view->addTabButton()->size().width();
+        int tabBarWidth = view->size().width() - buttonSize;
+        int baseWidth =  ReKonfig::defaultTabSize();
+        int minWidth =  ReKonfig::minimumTabSize();
+
+        int w;
+        if (baseWidth * count() < tabBarWidth)
         {
-            w = tabBarWidth / count();
+            w = baseWidth;
         }
         else
         {
-            w = minWidth;
+            if (count() > 0 && tabBarWidth / count() > minWidth)
+            {
+                w = tabBarWidth / count();
+            }
+            else
+            {
+                w = minWidth;
+            }
         }
+
+        int h = KTabBar::tabSizeHint(index).height();
+        size = QSize(w, h);
+    }
+    else
+    {
+        size = KTabBar::tabSizeHint(index);
     }
 
-    int h = KTabBar::tabSizeHint(index).height();
-
-    QSize ts = QSize(w, h);
-    return ts;
+    return size;
 }
 
 

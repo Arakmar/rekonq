@@ -50,6 +50,9 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void hasChanged();
+    void enableFixedTabSize(bool);
+    void adjustDefaultTabSize();
+    void adjustMinimumTabSize();
 
 private:
     bool _changed;

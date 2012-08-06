@@ -70,6 +70,9 @@ MainView::MainView(QWidget *parent)
     setTabBar(tabBar);
 
     tabBar->show();
+
+    setAutomaticResizeTabs(!ReKonfig::useFixedTabSize());
+
     // set mouse tracking for tab previews
     setMouseTracking(true);
 

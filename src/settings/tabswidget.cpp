@@ -34,12 +34,17 @@ TabsWidget::TabsWidget(QWidget *parent)
     , _changed(false)
 {
     setupUi(this);
+    connect(kcfg_useFixedTabSize, SIGNAL(toggled(bool)), this, SLOT(enableFixedTabSize(bool)));
+    connect(kcfg_defaultTabSize, SIGNAL(editingFinished()), this, SLOT(adjustDefaultTabSize()));
+    connect(kcfg_minimumTabSize, SIGNAL(editingFinished()), this, SLOT(adjustMinimumTabSize()));
+    enableFixedTabSize(kcfg_useFixedTabSize->isChecked());
 }
 
 
 void TabsWidget::save()
 {
 }
+
 
 bool TabsWidget::changed()
 {
@@ -49,4 +54,29 @@ bool TabsWidget::changed()
 
 void TabsWidget::hasChanged()
 {
+}
+
+
+void TabsWidget::enableFixedTabSize(bool b)
+{
+    kcfg_defaultTabSize->setEnabled(b);
+    kcfg_minimumTabSize->setEnabled(b);
+}
+
+
+void TabsWidget::adjustDefaultTabSize()
+{
+    if (kcfg_minimumTabSize->value() > kcfg_defaultTabSize->value())
+    {
+        kcfg_defaultTabSize->setValue(kcfg_minimumTabSize->value());
+    }
+}
+
+
+void TabsWidget::adjustMinimumTabSize()
+{
+    if (kcfg_defaultTabSize->value() < kcfg_minimumTabSize->value())
+    {
+        kcfg_minimumTabSize->setValue(kcfg_defaultTabSize->value());
+    }
 }
